@@ -12,6 +12,20 @@
 #include <string.h>
 #include <unistd.h>
 
+#define max(a,b)             \
+({                           \
+    __typeof__ (a) _a = (a); \
+    __typeof__ (b) _b = (b); \
+    _a > _b ? _a : _b;       \
+})
+
+#define min(a,b)             \
+({                           \
+    __typeof__ (a) _a = (a); \
+    __typeof__ (b) _b = (b); \
+    _a < _b ? _a : _b;       \
+})
+
 struct database
 {
     const char *host;
@@ -92,7 +106,7 @@ static int stderr_writer
     void *cls
 )
 {
-    fprintf(stderr, msg);
+    fprintf(stderr, "%s\n", msg);
     return 0;
 }
 
@@ -848,7 +862,7 @@ static int yield
     return lua_yield(L, 0);
 }
 
-static int connection_iter
+static enum MHD_Result connection_iter
 (
     void *cls,
     enum MHD_ValueKind kind,
@@ -877,7 +891,7 @@ static int get_connection_value
         return lerror(L, "must provide a kind and optionally a key");
     case 1:
     {
-        int kind = luaL_checkinteger(L, 1);
+        enum MHD_ValueKind kind = luaL_checkinteger(L, 1);
         lua_newtable(L);
         MHD_get_connection_values(get_context(L)->connection,
                                   kind,
@@ -920,7 +934,7 @@ static int lua_stderr
     lua_State *L
 )
 {
-    fprintf(stderr, luaL_tolstring(L, 1, 0));
+    fprintf(stderr, "%s\n", luaL_tolstring(L, 1, 0));
     return 0;
 }
 
@@ -991,7 +1005,7 @@ struct bytecode
 
 static int push_response(lua_State *);
 
-static int crypt
+static int crypthash
 (
     lua_State *L
 )
@@ -1065,7 +1079,7 @@ static int call_pp
     return 1;
 }
 
-static int iterator
+static enum MHD_Result iterator
 (
     void *cls,
     enum MHD_ValueKind kind,
@@ -1078,13 +1092,14 @@ static int iterator
     size_t size
 )
 {
+    lua_State *L = cls;
     lua_pushstring(L, key);
     lua_pushlstring(L, data, size);
     lua_rawset(L, -3);
     return MHD_YES;
 }
 
-static void push_postprocessor
+static int push_postprocessor
 (
     lua_State *L
 )
@@ -1170,7 +1185,7 @@ static int openlib
     lua_pushcfunction(L, push_response);
     lua_rawset(L, -3);
     lua_pushliteral(L, "crypt");
-    lua_pushcfunction(L, crypt);
+    lua_pushcfunction(L, crypthash);
     lua_rawset(L, -3);
     lua_pushliteral(L, "base64_to_raw");
     lua_pushcfunction(L, base64_to_raw);
@@ -1585,7 +1600,7 @@ static int send_response_code
     return ret;
 }
 
-static int answer_to_connection
+static enum MHD_Result answer_to_connection
 (
     void *cls,
     struct MHD_Connection *connection,
@@ -1651,7 +1666,8 @@ static int answer_to_connection
         context->upload_data.data = upload_data;
         *upload_data_size = 0;
     }
-    int ret = lua_resume(context->lua_thread, 0, 0);
+    int nres;
+    int ret = lua_resume(context->lua_thread, 0, 0, &nres);
     switch(ret)
     {
     case LUA_OK:

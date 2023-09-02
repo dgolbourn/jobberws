@@ -1,0 +1,15 @@
+{
+    "database": {
+        "user": "root",
+        "password": "root_pswd",
+        "database": "jobsheet"
+    },
+    "webservice": {
+        "port": 8888,
+        "filename": "scripts/ws.lua",
+        "preload": {
+            "test": "scripts/test.lua",
+            "other": "scripts/other.lua"
+        }
+    }
+}

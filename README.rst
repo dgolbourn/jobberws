@@ -12,7 +12,7 @@ JobberWS is run on the command line like
 
 ::
 
-    JobberWS.exe config.json
+    jobberws scripts/config.json
 
 
 The config file is described by the following template
@@ -406,23 +406,11 @@ The ``sql result`` returned from calling ``jobberws.query()`` has the following 
     :type field: integer or string
     :rtype: string or empty table if not present
 
-How to build
-============
-
-JobberWS is mostly just one c file ``http.c`` with a couple of utility files for base64 encoding and the sha256 crypt function.  Besides that it needs to be linked to the following libraries
-
-- libmicrohttpd
-
-- lua (5.3)
-
-- jansson
-
-- mariadb-connector-c
 
 License
 =======
 
-Copyright (c) 2018 Diane Marigold
+Copyright (c) 2023 Diane Marigold
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
