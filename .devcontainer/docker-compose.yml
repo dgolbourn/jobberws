@@ -5,3 +5,23 @@ services:
     volumes:
       - ../:/workspace:cached
     command: sleep infinity
+    ports:
+      - '8888:8888'
+    expose:
+      - '8888'
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - db:/var/lib/mysql
+volumes:
+  db:

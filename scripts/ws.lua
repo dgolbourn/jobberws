@@ -16,6 +16,13 @@ while data do
     data = jobberws.upload_data()
 end
 
+
+local result = jobberws.query("SELECT * FROM Person")
+jobberws.log("query returned " .. #result .. " rows")
+for i = 1,#result,1 do
+    jobberws.log(result[i].name)
+end
+
 --create an html response here
 jobberws.log("response")
 

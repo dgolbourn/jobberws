@@ -1,8 +1,10 @@
 {
     "database": {
         "user": "root",
-        "password": "root_pswd",
-        "database": "jobsheet"
+        "password": "password",
+        "database": "db",
+        "port": 3306,
+        "host" : "db"
     },
     "webservice": {
         "port": 8888,
