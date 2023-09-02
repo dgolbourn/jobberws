@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/JobberWS",
+            "program": "${workspaceFolder}/jobberws",
             "args": ["scripts/config.json"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
